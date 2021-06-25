@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
+  <!-- Custom CSS -->
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+  <!-- favicon -->
+  <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+  <title>swatcher</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@900&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="container swatcher">
+
+    <!-- FLASH/ALERT MESSAGES -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="flashes text-center px-5 pt-4 fs-6">
+          {% for category, message in messages %}
+            <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+              {{ message }}
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <!-- HEADER -->
+    <div class="header text-center pt-4 pb-3">
+      <!-- logo should only show on homepage -->
+      {% if not resample_form %}
+        <div class="logo pt-5 pb-2">
+          <a href="{{ url_for('index') }}"><img class="img-fluid" src="{{ url_for('static', filename='swatcher_logo.png') }}" alt="swatcher" width="96" height="96"></a>
+        </div>
+        <h1 class="text-primary"><a href="{{ url_for('index') }}" class="text-decoration-none">swatcher</a></h1>
+      {% else %}
+        <div class="row justify-content-center align-items-center">
+          <div class="col-auto p-0">
+              <div class="logo py-2">
+                <a href="{{ url_for('index') }}"><img class="img-fluid" src="{{ url_for('static', filename='swatcher_logo.png') }}" alt="swatcher" width="32" height="32"></a>
+              </div>
+          </div>
+          <div class="col-auto">
+            <h1 class="text-primary"><a href="{{ url_for('index') }}" class="text-decoration-none">swatcher</a></h1>
+          </div>
+        </div>
+      {% endif %}
+    </div>
+
+    <!-- JINJA BLOCK CONTENT -->
+    {% block content %}{% endblock %}
+
+    <!-- FOOTER -->
+    <div class="footer pb-4 text-center">
+      <p>
+        <a class="text-decoration-none" href="https://twitter.com/joshbduncan" target="_blank">Josh Duncan</a> &copy; 2021<br>
+        Powered by <a class="text-decoration-none" href="https://github.com/joshbduncan/swatcher" target="_blank">swatcher</a> and <a class="text-decoration-none" href="https://flask.palletsprojects.com/en/1.1.x/" target="_blank">Flask</a>
+      </p>
+    </div>
+  </div>
+  <!-- LOAD JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4" crossorigin="anonymous"></script>
+  <!-- only load custom js when needed -->
+  {% if resample_form %}
+    <script type="text/javascript" src="{{ url_for('static', filename='script.js') }}"></script>
+  {% endif %}
+</body>
+</html>

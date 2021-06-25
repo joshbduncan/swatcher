@@ -1,0 +1,46 @@
+body {
+  font-size: 1.25rem;
+}
+
+.swatcher {
+  max-width: 52em;
+}
+
+.header h1 {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 900;
+}
+
+.bi {
+  vertical-align: -0.0625em;
+}
+
+.sample-image {
+  /* max-width: 500px; */
+  max-height: 300px;
+}
+
+.swatch {
+  width: 12rem;
+  height: 6rem;
+}
+
+@media (max-width: 576px) {
+  .color {
+    padding: .75rem!important;
+  }
+  .swatch {
+    width: 9rem;
+  }
+  .rgb, .cmyk {
+    font-size: .75rem!important;
+  }
+}
+
+.copy-button {
+  font-size: .75rem;
+  background-color: #fff;
+  padding: .125rem .25rem;
+  margin-top: .5rem;
+  margin-right: .5rem;
+}

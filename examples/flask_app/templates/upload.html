@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<!-- image upload form -->
+<div class="upload pt-3">
+  <form method="POST" enctype="multipart/form-data">
+    {{ upload_form.hidden_tag() }}
+    <div class="row justify-content-center">
+      <div class="max_colors col-auto">
+        <label for="image" class="visually-hidden">Image to Sample</label>
+        <input class="form-control form-control-lg{% if upload_form.image.errors %} is-invalid{% endif %}" type="file" id="image" name="image" accept=".jpg, .jpeg, .gif, .png" required>
+        {% if upload_form.image.errors %}
+          {% for error in upload_form.image.errors %}
+            <div class="invalid-feedback text-center">
+              {{ error }}
+            </div>
+          {% endfor %}
+        {% endif %}
+      </div>
+    </div>
+    <div class="row justify-content-center pt-3">
+      <div class="col-auto">
+        <button class="btn btn-primary btn-lg mb-3" type="submit" id="upload" name="upload" value="Upload Image">Upload Image</button>
+      </div>
+    </div>
+  </form>
+</div>
+
+{% endblock content %}
