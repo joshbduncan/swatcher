@@ -29,13 +29,10 @@ from swatcher import Swatcher
 
 s = Swatcher('/path/to/your/image.jpg')
 
-# sample the most common colors (default settings)
-palette = s.palette
-
-# view the sampled palette (RGB values)
+# view the most common colors (RGB values)
 s.palette
 
-# view an image of the sampled palette swatches
+# view image of the sampled palette
 s.show_palette_image()
 
 # resample the image with new settings
