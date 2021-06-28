@@ -1,3 +1,4 @@
+from math import sqrt, isqrt
 from PIL import Image, ImageDraw, ImageFont
 from swatcher.color import color_distance, normalize_rgb_values, rgb_2_hex, rgb_2_luma
 
@@ -70,13 +71,41 @@ def set_font(fontface: str, size: int) -> object:
     return font
 
 
-def draw_swatches(colors: list, size: int = 200, cols: int = 4) -> object:
+def perfect_square(i: int) -> bool:
+    """Determine is a number is a perfect square"""
+    return i == isqrt(i) ** 2
+
+
+def cols_and_rows(i: int) -> tuple:
+    """Calculate the best layout for drawing all swatches."""
+    if perfect_square(i):
+        cols = rows = int(sqrt(i))
+    else:
+        if i <= 5:
+            div = 1
+        elif i <= 10:
+            div = 2
+        else:
+            div = 4
+        # determine columns needed
+        if i <= 5 or i % 2 == 0:
+            cols = i // div
+        else:
+            cols = (i + 1) // div
+        # determine rows needed
+        if i % cols == 0:
+            rows = i // cols
+        else:
+            rows = (i // cols) + 1
+    return (cols, rows)
+
+
+def draw_swatches(colors: list, size: int = 200) -> object:
     """
     Generate a PIL Image object of color swatches.
 
     :param colors: a list of RGB color tuples (or lists)
     :param size: width in pixels of each color swatch (min=150, max=500)
-    :param cols: number of swatches per row
     :returns: PIL Image object
     """
 
@@ -91,17 +120,12 @@ def draw_swatches(colors: list, size: int = 200, cols: int = 4) -> object:
 
     # calculate the required rows, columns, and final image size
     total = len(colors)
-    if total < cols:
-        cols = total
-    if total % cols == 0:
-        rows = total // cols
-    else:
-        rows = (total // cols) + 1
+    cols, rows = cols_and_rows(total)
     width = cols * size
     height = rows * size
 
     # create a new image and setup drawing object and font
-    image = Image.new("RGB", (width, height), (255, 255, 255))
+    image = Image.new("RGBA", (width, height), (255, 255, 255, 0))
     d = ImageDraw.Draw(image)
     font = set_font("Arial Bold.ttf", size // 6)
 
@@ -113,7 +137,7 @@ def draw_swatches(colors: list, size: int = 200, cols: int = 4) -> object:
 
         # calculate the swatch position and draw
         p1 = ((i % cols) * size, (i // cols) * size)
-        p2 = (p1[0] + size, p1[1] + size)
+        p2 = (p1[0] + size - 1, p1[1] + size - 1)
         d.rectangle(xy=(p1, p2), fill=color)
 
         # convert rgb values to hex code

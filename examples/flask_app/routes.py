@@ -42,7 +42,7 @@ def prepare_pil_image(image: object) -> object:
     :returns: temporary file object
     """
     img_io = BytesIO()
-    image.save(img_io, "JPEG", quality=100, subsampling=0)
+    image.save(img_io, "PNG")
     img_io.seek(0)
     return img_io
 
@@ -175,7 +175,7 @@ def image():
         return send_file(
             prepare_pil_image(file),
             mimetype="image/jpeg",
-            download_name=f"SWATCHER-{id}.jpg",
+            download_name=f"SWATCHER-{id}.png",
             as_attachment=True,
         )
     else:

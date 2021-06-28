@@ -2,9 +2,13 @@
 
 function build {
     # build the app for pypi
-    echo "⚙️ building Swatcher..."
     source venv/bin/activate
-    python -m build
+    if test ; then
+        echo "⚙️ building Swatcher..."
+        python -m build
+    else
+        echo "❌ build was unsuccessful"
+    fi
 }
 
 function cleanup {
@@ -16,8 +20,15 @@ function cleanup {
 
 function test {
     # test app using pytest
+    echo "🧾 testing Swatcher..."
     source venv/bin/activate
     pytest
+}
+
+function upload {
+    # upload to pypi
+    echo "⬆️ uploading to pypi..."
+    twine upload dist/*
 }
 
 function help {

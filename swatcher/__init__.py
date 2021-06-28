@@ -8,7 +8,7 @@
     :license: MIT, see LICENSE for more details.
 """
 
-__version__ = "1.0.0"
+__version__ = "1.0.2"
 
 import os
 
@@ -17,26 +17,27 @@ from PIL import Image
 from . import color, export, image, palette
 
 
-def save_location(file: object) -> tuple:
+def get_file_info(file: object) -> tuple:
     """
     Check to see if the provided image was a file path or a file object.
 
     :param colors: PIL Image object
-    :returns: tuple (location, filename)
+    :returns: file path
     """
-    filepath = getattr(file, "filename", None)
-    if filepath:  # if a path was provided we are set
-        location = filepath
-    else:  # if a file object was provided
-        # get the users home directory
+    fp = getattr(file, "filename", None)
+    if not fp:  # if a file object was provided
         home = os.path.expanduser("~")
-        # get the current date and time
         created_dt = datetime.now().replace(microsecond=0).isoformat()
-        # set a new save as filename
-        filename = "Swatcher " + created_dt
-        # set the final save location
-        location = os.path.join(home, filename)
-    return os.path.split(location)
+        filename = created_dt
+        fp = os.path.join(home, filename)
+    return fp
+
+
+def validate_path(path: str):
+    """Check for existance of export path."""
+    dp = os.path.dirname(path)
+    if not os.path.exists(dp):
+        raise FileNotFoundError("Sorry, the save location doesn't exist.")
 
 
 class Swatcher:
@@ -52,8 +53,8 @@ class Swatcher:
         :param `file`: a filename (string) or file object in binary mode
         """
         self.image = Image.open(file)
-        # set save path and filename
-        self._location, self._filename = save_location(self.image)
+        # get or set the file path
+        self.path = get_file_info(self.image)
         # process image for color sampling
         self._processed_image = image.process_image(self.image)
         # count and sort colors from every pixel
@@ -64,22 +65,6 @@ class Swatcher:
         self._palette = None
         self._palette_image = None
 
-    def sample(self, max_colors: int = None, sensitivity: int = None) -> list:
-        """
-        Resample a new palette from `self.image` using the
-        supplied sample settings `max_colors` and `sensitivity`.
-
-        :param max_colors: maximum colors to sample from `self.image`
-        :param sensitivity: how perceptively different (Euclidean Distance) a color
-                          must be from others to be included in the sampled palette.
-        :returns: list of rgb color tuples
-        """
-        if max_colors:
-            self.max_colors = max_colors
-        if sensitivity:
-            self.sensitivity = sensitivity
-        return self.palette
-
     @property
     def palette(self) -> list:
         """
@@ -89,9 +74,7 @@ class Swatcher:
         :returns: list of rgb color tuples
         """
         if not self._palette:
-            self._palette = palette.sample(
-                self._colors, self.max_colors, self.sensitivity
-            )
+            self.sample(self._max_colors, self._sensitivity)
         return self._palette
 
     @property
@@ -141,6 +124,27 @@ class Swatcher:
             self._palette_image = palette.draw_swatches(self.palette)
         return self._palette_image
 
+    def sample(self, max_colors: int = None, sensitivity: int = None) -> list:
+        """
+        Sample a new palette from `self.image` using the supplied sample
+        settings `max_colors` and `sensitivity` or the defaults.
+
+        :param max_colors: maximum colors to sample from `self.image`
+        :param sensitivity: how perceptively different (Euclidean Distance) a color
+                          must be from others to be included in the sampled palette.
+        :returns: list of rgb color tuples
+        """
+        if max_colors:
+            self.max_colors = max_colors
+        if sensitivity or sensitivity == 0:
+            self.sensitivity = sensitivity
+
+        self._reset_current_palette()
+        self._palette = palette.sample(
+            self._colors, self._max_colors, self._sensitivity
+        )
+        return self.palette
+
     def show_processed_image(self):
         """Show `self.processed_image` in your standard image viewer."""
         self.processed_image.show()
@@ -149,59 +153,49 @@ class Swatcher:
         """Show `self.palette_image` in your standard image viewer."""
         self.palette_image.show()
 
-    def export_ase_file(self, location: str = None, filename: str = None):
+    def export_ase_file(self, path: str = None) -> str:
         """
         Export an Adobe ASE (.ase) file of all swatches from `self.palette`.
 
-        If no valid locaiton is provided the file will be saved in
+        If no valid path is provided the file will be saved in
         the same directory as `self.image`.
-
-        If a filename is not provided, the file will be saved as
-        the same name as `self.image`.
 
         This operation will overwrite any files of the same name.
 
-        :param `location`: file system location where the ase file should be saved
-        :param `filename`: filename to save the ASE file as
+        :param `path`: a filename string
+        :returns: file location
         :exception FileNotFoundError: If the save location doesn't exist
         """
 
-        # set final export location
-        location = self._check_export_location(location)
-        # if filename not provided use filename of `self.image`
-        if not filename:
-            filename = self._filename
+        # check the export location final export location
+        if path:
+            validate_path(path)
+        else:
+            path = self.path
 
-        # set the final export patha and save the file
-        path = os.path.join(location, f"{filename}-SWATCHER.ase")
         exported_file = export.export_ase_file(self.palette, path)
         return exported_file
 
-    def export_palette_image(self, location: str = None, filename: str = None):
+    def export_palette_image(self, path: str = None) -> str:
         """
-        Export a JPEG version of `self.palette_image`.
+        Export a PNG version of `self.palette_image`.
 
-        If no valid locaiton is provided the file will be saved in
+        If no valid path is provided the file will be saved in
         the same directory as `self.image`.
-
-        If a filename is not provided, the file will be saved as
-        the same name as `self.image`.
 
         This operation will overwrite any files of the same name.
 
-        :param `location`: file system location where the ase file should be saved
-        :param `filename`: filename to save the ASE file as
+        :param `path`: a filename string
+        :returns: file location
         :exception FileNotFoundError: If the save location doesn't exist
         """
 
-        # set final export location
-        location = self._check_export_location(location)
-        # if filename not provided use filename of `self.image`
-        if not filename:
-            filename = self._filename
+        # check the export location final export location
+        if path:
+            validate_path(path)
+        else:
+            path = self.path
 
-        # set the final export patha and save the file
-        path = os.path.join(location, f"{filename}-SWATCHER.jpg")
         exported_file = export.export_image_file(self.palette_image, path)
         return exported_file
 
@@ -210,21 +204,13 @@ class Swatcher:
         self._palette = None
         self._palette_image = None
 
-    def _check_export_location(self, path):
-        """Check for validity of provided export location."""
-        if path and not os.path.exists(path):
-            raise FileNotFoundError("Sorry, the save location doesn't exist.")
-        else:  # set location to same as `self.image`
-            path = self._location
-        return path
-
     def __repr__(self):
         return repr(
-            f"Swatcher object: {self._filename}, {self.max_colors=}, {self.sensitivity=}"
+            f"Swatcher object: {self.path}, {self.max_colors=}, {self.sensitivity=}"
         )
 
     def __str__(self):
         return f"""Swatcher object:
-File: {self._filename}
+File: {self.path}
 Settings: max colors={self.max_colors}, sensitivity={self.sensitivity}
 Sampled Colors: {self.palette}"""

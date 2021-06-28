@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(
     name="swatcher",
-    version="1.0.0",
+    version="1.0.2",
     author="Josh Duncan",
     author_email="joshbduncan@gmail.com",
     description="Generate Adobe ASE swatches from images.",
@@ -21,5 +21,5 @@ setup(
     keywords=["adobe", "color", "swatches"],
     packages=find_packages(include=["swatcher"]),
     install_requires=["Pillow"],
-    python_requires=">=3.6",
+    python_requires=">=3.8",
 )

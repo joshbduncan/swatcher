@@ -70,20 +70,18 @@ def test_10():  # sampled palette with indirect settings in sample function
 
 
 def test_11():  # image export
-    filename = "test_export_image"
-    path = IMG.export_palette_image(TEMP_DIR.name, filename)
+    path = IMG.export_palette_image(TEMP_DIR.name)
     assert os.path.exists(path)
 
 
 def test_12():  # ase export
-    filename = "test_export_ase"
-    path = IMG.export_ase_file(TEMP_DIR.name, filename)
+    path = IMG.export_ase_file(TEMP_DIR.name)
     assert os.path.exists(path)
 
 
 def test_13():  # export location does not exist
     with pytest.raises(FileNotFoundError):
-        temp_dir_gone = tempfile.TemporaryDirectory()
-        temp_dir_gone.cleanup()
-        filename = "test_export_fail"
-        path = IMG.export_ase_file(temp_dir_gone.name, filename)
+        temp_dir = tempfile.TemporaryDirectory()
+        temp_dir.cleanup()
+        temp_path = os.path.join(temp_dir.name, "no_longer.txt")
+        path = IMG.export_ase_file(temp_path)

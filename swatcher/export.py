@@ -1,3 +1,4 @@
+import os
 import tempfile
 import struct
 
@@ -104,22 +105,32 @@ def write_ase_file(colors: list) -> object:
     return file
 
 
+def check_path_type(path):
+    """Check to see if a file name was supplied with the path"""
+    fn = os.path.basename(path)
+    if fn:
+        return path + ".SWATCHER"
+    else:
+        return os.path.join(path, "SWATCHER")
+
+
 def export_ase_file(colors: list, path: str) -> str:
     """
     Export an encoded Adobe ASE temp file to filesystem.
 
     :param colors: a list of RGB color tuples (or lists)
-    :param path: the file path to export the ase file to
+    :param `path`: a filename string
     :returns: export location in filesystem
     :exception OSError: swatches could not be exported
     """
     temp_file = write_ase_file(colors)
+    fp = check_path_type(path) + ".ase"
     try:
-        with open(path, "wb") as file:
+        with open(fp, "wb") as file:
             file.write(temp_file.read())
     except OSError as e:
         raise OSError(f"Swatches could not be exported to {path}.") from e
-    return path
+    return fp
 
 
 def export_image_file(image: object, path: str) -> str:
@@ -127,8 +138,9 @@ def export_image_file(image: object, path: str) -> str:
     Writes a JPEG image of the palette to the filesystem.
 
     :param image: a PIL image object
-    :param path: the file path to export the ase file to
+    :param `path`: a filename string
     :returns: export location in filesystem
     """
-    image.save(path, "JPEG", quality=100, subsampling=0)
-    return path
+    fp = check_path_type(path) + ".png"
+    image.save(fp, "PNG")
+    return fp
