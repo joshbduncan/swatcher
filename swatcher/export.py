@@ -36,11 +36,7 @@ def create_ase_swatches(colors: list) -> list:
     :param colors: a list of RGB color tuples eg. [(255, 255, 255), (0, 0, 0)]
     :returns: formatted Adobe ASE color swatches
     """
-    ase_colors = []
-    for color in colors:
-        swatch = format_ase_swatch(color)
-        ase_colors.append(swatch)
-    return ase_colors
+    return [format_ase_swatch(color) for color in colors]
 
 
 def color_byte_chunk(color: dict) -> bytes:
@@ -135,7 +131,7 @@ def export_ase_file(colors: list, path: str) -> str:
 
 def export_image_file(image: object, path: str) -> str:
     """
-    Writes a JPEG image of the palette to the filesystem.
+    Writes an image of the palette to the filesystem.
 
     :param image: a PIL image object
     :param `path`: a filename string

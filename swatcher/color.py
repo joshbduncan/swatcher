@@ -14,7 +14,7 @@ def normalize_rgb_values(color: tuple) -> tuple:
     for i in range(3):
         if color[i] <= 3:
             color[i] = 0
-        if color[i] >= 253:
+        elif color[i] >= 253:
             color[i] = 255
     return tuple(color)
 
@@ -29,9 +29,7 @@ def rgb_2_luma(color: tuple) -> int:
     :param color: a tuple of RGB color values eg. (255, 255, 255)
     :returns: luminance "brightness" value
     """
-    r = color[0] / 255
-    g = color[1] / 255
-    b = color[2] / 255
+    r, g, b = color[0] / 255, color[1] / 255, color[2] / 255
     l = 0.33 * r + 0.5 * g + 0.16 * b
     return round(l, 2)
 
@@ -66,7 +64,7 @@ def rgb_2_cmyk(color: tuple) -> tuple:
     :returns: CMYK values eg. (C, M, Y, K)
     """
 
-    # if RGB color is black return black
+    # if RGB color is black return CMYK black
     if color == (0, 0, 0):
         return (0, 0, 0, 100)
     # convert the RGB values
@@ -80,14 +78,10 @@ def rgb_2_cmyk(color: tuple) -> tuple:
 
 def color_2_dict(color: tuple) -> dict:
     """
-    Convert RGB color vales to HEX and CMYK then combine
-    into a dictionary in the following format.
+    Convert tuple of RGB color vales to HEX and CMYK then
+    combine into a dictionary in the following format.
 
-    {
-        "rgb": (0, 0, 0),
-        "hex": "#000000",
-        "cmyk": (0, 0, 0, 100),
-    }
+    {"rgb": (0, 0, 0), "hex": "#000000", "cmyk": (0, 0, 0, 100)}
 
     :param color: tuple of RGB values for color eg. (255, 255, 255)
     :returns: RGB, HEX and CMYK values
@@ -113,8 +107,8 @@ def color_distance(color1: tuple, color2: tuple) -> int:
 
     https://en.wikipedia.org/wiki/Color_difference
 
-    :param color1: tuple of RGB values for color eg. (255, 255, 255)
-    :param color2: tuple of RGB values for color eg. (0, 0, 0)
+    :param color1: tuple of RGB color values eg. (255, 255, 255)
+    :param color2: tuple of RGB color values
     :returns: Euclidean distance of two colors
     """
     r1, g1, b1 = color1

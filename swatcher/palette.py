@@ -13,19 +13,9 @@ def sample(colors: list, max_colors: int = 8, sensitivity: int = 75) -> list:
                     must be from others to be included in the sampled palette.
     :returns: list of most common colors in RGB tuples (255, 255, 255)
     """
-    # fix bad inputs
-    if max_colors > 20:
-        max_colors = 20
-    if max_colors <= 0:
-        max_colors = 8
-    if sensitivity > 250:
-        sensitivity = 250
-    if sensitivity < 0:
-        sensitivity = 75
 
     # reduce all found colors using supplied sensitivity
     sampled_colors = []
-    skipped = set()
     for color in colors:
         # if max_color limit reached stop looking
         if len(sampled_colors) == max_colors:
@@ -38,13 +28,9 @@ def sample(colors: list, max_colors: int = 8, sensitivity: int = 75) -> list:
             continue
         # calculate Euclidean distance for a color against colors
         # already appended to determine if it shoule be ignored
-        for found_color in sampled_colors:
-            distance = color_distance(color, found_color)
-            if distance <= sensitivity:
-                skipped.add(color)
-                break
-        # if color wasn't too close to any appended colors keep it
-        if color not in skipped:
+        if not any(
+            color_distance(color, found) <= sensitivity for found in sampled_colors
+        ):
             sampled_colors.append(color)
 
     return sampled_colors

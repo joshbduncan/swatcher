@@ -21,3 +21,9 @@
     - Changed file type from JPEG to PNG with transparency
 - Updated tests to reflect changes
 - Updated README to reflect changes
+
+**(2021-07-11)**
+
+- Code refactoring
+- Reworked `trim_excess` function
+- Reworked `sample` function to use any() operator
