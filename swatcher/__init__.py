@@ -46,24 +46,25 @@ class Swatcher:
     from an image and exporting them as Adobe ASE color swatches.
     """
 
-    def __init__(self, file):
+    def __init__(self, file, max_colors: int = None, sensitivity: int = None):
         """
         Initialize an image for color sampling.
 
         :param `file`: a filename (string) or file object in binary mode
         """
         self.image = Image.open(file)
+        self._max_colors = 8
+        self._sensitivity = 75
+        self._palette = None
+        self._palette_image = None
         # get or set the file path
         self.path = get_file_info(self.image)
         # process image for color sampling
         self._processed_image = image.process_image(self.image)
         # count and sort colors from every pixel
         self._colors = color.get_colors(self._processed_image)
-        # initialize other settings and variables
-        self._max_colors = 8
-        self._sensitivity = 75
-        self._palette = None
-        self._palette_image = None
+        # sample the image
+        self.sample(max_colors, sensitivity)
 
     @property
     def palette(self) -> list:

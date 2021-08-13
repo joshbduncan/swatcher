@@ -35,7 +35,14 @@ s.palette
 
 Swatcher will automatically sample the provided image at initialization using the default settings `max_colors=8` and `sensitivity=75`. I have found these general settings to work best for most images.
 
+ℹ️ You can also specify `max_colors` and `sensitivity` at object creation.
+
+```python
+s = Swatcher('/path/to/your/image.jpg', max_colors=5, sensitivity=125)
+```
+
 ### View the sampled swatches
+
 To view the sample palette swatches in your default system image viewer.
 
 ```python
@@ -43,14 +50,15 @@ s.show_palette_image()
 ```
 
 ### Resample the image
+
 If the sampled colors were not what you were expecting, you can easily resample your image with different settings.
 
 ```python
 s.sample(max_colors=4, sensitivity=50)
 ```
 
-- **max_colors**: Maximum number of colors to sample (may sample less)
-- **sensitivity**: How perceptively different (Euclidean Distance) a color must be from others to be included in the sampled palette. *A lower value = more similar colors, a higher value = less similar colors.*
+-   **max_colors**: Maximum number of colors to sample (may sample less)
+-   **sensitivity**: How perceptively different (Euclidean Distance) a color must be from others to be included in the sampled palette. _A lower value = more similar colors, a higher value = less similar colors._
 
 #### Sensitivity Example:
 
@@ -69,7 +77,7 @@ By default, the ASE swatch file will be saved in one of two places depending on 
 1. If you provided an image file path, the Adobe ASE swatch file will be saved in the same directory.
 2. If you provided a file object, the Adobe ASE swatch file will be saved in your current users home directory.
 
-***...or export to a specific location***
+**_...or export to a specific location_**
 
 ```python
 s.export_ase_file("path/you/want/to/use/")
@@ -77,4 +85,4 @@ s.export_ase_file("path/you/want/to/use/")
 
 ## Resources
 
-- [PyPi](https://pypi.python.org/pypi/swatcher)
+-   [PyPi](https://pypi.python.org/pypi/swatcher)

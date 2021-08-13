@@ -7,16 +7,9 @@ def normalize_rgb_values(color: tuple) -> tuple:
     Clean-up any slight color differences in PIL sampling.
 
     :param color: a tuple of RGB color values eg. (255, 255, 255)
-    :returns: a tuple of RGB color values eg. (255, 255, 255)
+    :returns: a tuple of RGB color values
     """
-    if type(color) == tuple:
-        color = [val for val in color]
-    for i in range(3):
-        if color[i] <= 3:
-            color[i] = 0
-        elif color[i] >= 253:
-            color[i] = 255
-    return tuple(color)
+    return tuple([0 if val <= 3 else 255 if val >= 253 else val for val in color])
 
 
 def rgb_2_luma(color: tuple) -> int:
