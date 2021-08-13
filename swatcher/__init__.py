@@ -27,7 +27,7 @@ def get_file_info(file: object) -> tuple:
     fp = getattr(file, "filename", None)
     if not fp:  # if a file object was provided
         home = os.path.expanduser("~")
-        created_dt = datetime.now().replace(microsecond=0).isoformat()
+        created_dt = datetime.now().replace(microsecond=0).isoformat().replace(":", "")
         filename = created_dt
         fp = os.path.join(home, filename)
     return fp

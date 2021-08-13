@@ -30,3 +30,4 @@
 -   Reworked `normalize_rgb_values` function
 -   Added the ability to set `max_colors` and `sensitivity` during object creation
 -   Updated README to reflect changes
+-   Remove ':' from save name timestamp
