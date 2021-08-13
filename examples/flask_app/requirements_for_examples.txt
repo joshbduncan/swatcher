@@ -10,6 +10,6 @@ Jinja2==3.0.1
 MarkupSafe==2.0.1
 Pillow==8.2.0
 python-dotenv==0.18.0
-swatcher==1.0.0
+swatcher==1.0.3
 Werkzeug==2.0.1
 WTForms==2.3.3
